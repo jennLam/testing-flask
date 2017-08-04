@@ -45,6 +45,11 @@ class PartyTestsDatabase(unittest.TestCase):
 
         self.client = app.test_client()
         app.config['TESTING'] = True
+        app.config['SECRET_KEY'] = "key"
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['RSVP'] = 1
 
         # Connect to test database
         connect_to_db(app, "postgresql:///testdb")
@@ -65,6 +70,8 @@ class PartyTestsDatabase(unittest.TestCase):
         result = self.client.get("/games")
         self.assertIn("Splendor", result.data)
         self.assertIn("Card based where you try to accumulate", result.data)
+
+
 
 
 if __name__ == "__main__":
